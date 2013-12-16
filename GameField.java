@@ -1,6 +1,6 @@
 package com.sobol;
 
-import java.util.Scanner;
+import java.io.PrintWriter;
 
 /**
  * Created with IntelliJ IDEA.
@@ -9,15 +9,22 @@ import java.util.Scanner;
  * Time: 17:23
  * To change this template use File | Settings | File Templates.
  */
-public class GameField {
+public class GameField implements GameProcess {
 
-    private static int FIELD_SIZE;
-    private static int SCORE_TO_WIN;
+    private int FIELD_SIZE;
+    private int SCORE_TO_WIN;
+    private int MAX_MOVES_VALUE;
+
+    public static final char playerX = 'X';
+    public static final char playerO = 'O';
 
 
     private char[][] field;
     private static int[][] indexedField;
 
+    private int lastMoveLine;
+    private int lastMoveColumn;
+    private int moves = 0;
 
     public GameField (int size) {
         FIELD_SIZE = size;
@@ -25,6 +32,7 @@ public class GameField {
             SCORE_TO_WIN = size;
         }
         else SCORE_TO_WIN = 5;
+        MAX_MOVES_VALUE = FIELD_SIZE*FIELD_SIZE;
 
         field = new char[FIELD_SIZE][FIELD_SIZE];
         indexedField = new int[FIELD_SIZE][FIELD_SIZE];
@@ -53,6 +61,21 @@ public class GameField {
         }
     }
 
+    public void showFieldtoNet (PrintWriter out) {
+        out.println();
+        for(int i=0;i<FIELD_SIZE; i++) {
+            for(int j=0;j<FIELD_SIZE;j++) {
+                if (field[i][j] == ' ') {
+                    out.printf("[%3d]", indexedField[i][j]);
+                }
+                else {
+                    out.print("[ "+field[i][j]+" ]");
+                }
+            }
+            out.println();
+        }
+    }
+
     public void makeDefaultField () {
         int count = 0;
         for(int i=0;i<FIELD_SIZE; i++) {
@@ -61,10 +84,11 @@ public class GameField {
                 count++;
             }
         }
+        moves = 0;
     }
 
 
-    public boolean makeAMove (char currentPlayer) {
+    /*public boolean makeAMove (char currentPlayer) {
         Scanner in = new Scanner (System.in);
         int index;
         System.out.println("->Введите номер ячейки");
@@ -74,7 +98,7 @@ public class GameField {
             if (index < 0 || index >= FIELD_SIZE*FIELD_SIZE) {
                 System.out.println("->Некорректное значение, введите другой номер.");
             }
-            else if (field[index/FIELD_SIZE][index%FIELD_SIZE] == 'X' || field[index/FIELD_SIZE][index%FIELD_SIZE] == 'O'){
+            else if (field[index/FIELD_SIZE][index%FIELD_SIZE] == playerX || field[index/FIELD_SIZE][index%FIELD_SIZE] == playerO){
                 System.out.println("->Данная ячейка занята, введите другой номер.");
             }
             else {
@@ -84,43 +108,64 @@ public class GameField {
         }
         while (true);
 
-        return checkBigField(index/FIELD_SIZE, index%FIELD_SIZE, currentPlayer);
+        return checkWin(index / FIELD_SIZE, index % FIELD_SIZE, currentPlayer);
+    }*/
+
+
+    public int getFIELD_SIZE() {
+        return FIELD_SIZE;
     }
 
-    public boolean checkField (char sign) {
-
-        //проверка победы в строке или столбце
-        for (int i = 0; i<FIELD_SIZE;i++) {
-            if(field[i][0] == sign && field[i][1] == sign && field[i][2] == sign) {
-                return true;
-            }
-            if(field[0][i] == sign && field[1][i] == sign && field[2][i] == sign) {
-                return true;
-            }
-        }
-
-
-        //проверка победы в диагоналях
-        if(field[0][0] == sign && field[1][1] == sign && field[2][2] == sign) {
-            return true;
-        }
-
-        if(field[2][0] == sign && field[1][1] == sign && field[0][2] == sign) {
-            return true;
-        }
-
-        return false;
+    public char getFieldElement(int line, int column) {
+        return field[line][column];
     }
 
-    private boolean checkBigField (int line, int column, char sign) {
+    public void setFieldElement(int line, int column, char sign) {
+        field[line][column] = sign;
+    }
+
+    public void setLastMove (int line, int column) {
+        lastMoveLine = line;
+        lastMoveColumn = column;
+    }
+
+    public int getLastMoveLine() {
+        return lastMoveLine;
+    }
+
+    public int getLastMoveColumn() {
+        return lastMoveColumn;
+    }
+
+    public int getSCORE_TO_WIN() {
+        return SCORE_TO_WIN;
+    }
+
+    public void incrementMoves () {
+        moves++;
+    }
+
+    @Override
+    public Player switchTurn(Player currentPlayer, Player one, Player two) {
+        if (currentPlayer.equals(one)) {
+            return two;
+        }
+        else {
+            return one;
+        }
+
+    }
+
+    @Override
+    public boolean checkWin(char sign) {
         //проверка диагонали \
         int count = 1;
-        int i = line, j = column, m = line, n = column;
+        int i = lastMoveLine, j = lastMoveColumn, m = lastMoveLine, n = lastMoveColumn;
         while(true) {
             if (--i >= 0 && --j >= 0 && field[i][j] == sign) {
                 count++;
             }
-            else if (++m <= FIELD_SIZE && ++n <= FIELD_SIZE && field[m][n] == sign) {
+            else if (++m < FIELD_SIZE && ++n < FIELD_SIZE && field[m][n] == sign) {
                 count++;
             }
             else if (count >= SCORE_TO_WIN) {
@@ -133,15 +178,15 @@ public class GameField {
 
         //проверка диагонали /
         count = 1;
-        i = line;
-        j = column;
-        m = line;
-        n = column;
+        i = lastMoveLine;
+        j = lastMoveColumn;
+        m = lastMoveLine;
+        n = lastMoveColumn;
         while(true) {
-            if (--i >= 0 && ++j >= FIELD_SIZE && field[i][j] == sign) {
+            if (--i >= 0 && ++j < FIELD_SIZE && field[i][j] == sign) {
                 count++;
             }
-            else if (++m <= FIELD_SIZE && --n >= 0 && field[m][n] == sign) {
+            else if (++m < FIELD_SIZE && --n >= 0 && field[m][n] == sign) {
                 count++;
             }
             else if (count >= SCORE_TO_WIN) {
@@ -154,15 +199,15 @@ public class GameField {
 
         //проверка вертикали
         count = 1;
-        i = line;
-        j = column;
-        m = line;
-        n = column;
+        i = lastMoveLine;
+        j = lastMoveColumn;
+        m = lastMoveLine;
+        n = lastMoveColumn;
         while(true) {
             if (--i >= 0 && field[i][j] == sign) {
                 count++;
             }
-            else if (++m <= FIELD_SIZE && field[m][n] == sign) {
+            else if (++m < FIELD_SIZE && field[m][n] == sign) {
                 count++;
             }
             else if (count >= SCORE_TO_WIN) {
@@ -175,15 +220,15 @@ public class GameField {
 
         //проверка горизонтали
         count = 1;
-        i = line;
-        j = column;
-        m = line;
-        n = column;
+        i = lastMoveLine;
+        j = lastMoveColumn;
+        m = lastMoveLine;
+        n = lastMoveColumn;
         while(true) {
             if (--j >= 0 && field[i][j] == sign) {
                 count++;
             }
-            else if (++n <= FIELD_SIZE && field[m][n] == sign) {
+            else if (++n < FIELD_SIZE && field[m][n] == sign) {
                 count++;
             }
             else if (count >= SCORE_TO_WIN) {
@@ -193,8 +238,16 @@ public class GameField {
                 break;
             }
         }
+
         return false;
     }
 
+    public boolean checkDraw () {
+        if (moves == MAX_MOVES_VALUE) {
+            return true;
+        }
+        else return false;
+
+    }
 }
 
