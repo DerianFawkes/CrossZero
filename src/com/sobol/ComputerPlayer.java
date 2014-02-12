@@ -18,91 +18,101 @@ public class ComputerPlayer extends Player {
 
     }
 
-    /*public int[] Analyse(GameField gameField) {
-
-        int lastMoveLine = gameField.getLastMoveLine();
-        int lastMoveColumn = gameField.getLastMoveLine();
+    public int[] Analyse(GameField gameField) {
+        int[] analyseResult = new int[2];
         int fieldSize = gameField.getFIELD_SIZE();
+
+        for(int i=0; i<=fieldSize; i++)
+            for (int j=0; j<=fieldSize; j++) {
+
+            }
+    return analyseResult;
+}
         //проверка диагонали \
-        int count = 0;
-        int i = lastMoveLine, j = lastMoveColumn, m = lastMoveLine, n = lastMoveColumn;
-        while(true) {
-            if (--i >= 0 && --j >= 0 && field[i][j] == sign) {
-                count++;
-            }
-            else if (++m < fieldSize && ++n < fieldSize && field[m][n] == sign) {
-                count++;
-            }
-            else if (count >= gameField.getSCORE_TO_WIN()-2) {
-                return true;
-            }
-            else {
-                break;
+        private int checkMainDiagonal(int line,int column) {
+            int count = 0;
+            int i = lastMoveLine, j = lastMoveColumn, m = lastMoveLine, n = lastMoveColumn;
+            while(true) {
+                if (--i >= 0 && --j >= 0 && field[i][j] == sign) {
+                    count++;
+                }
+                else if (++m < fieldSize && ++n < fieldSize && field[m][n] == sign) {
+                    count++;
+                }
+                else if (count >= gameField.getSCORE_TO_WIN()-2) {
+                    return true;
+                }
+                else {
+                    break;
+                }
             }
         }
 
         //проверка диагонали /
-        count = 1;
-        i = lastMoveLine;
-        j = lastMoveColumn;
-        m = lastMoveLine;
-        n = lastMoveColumn;
-        while(true) {
-            if (--i >= 0 && ++j > fieldSize && field[i][j] == sign) {
-                count++;
-            }
-            else if (++m < fieldSize && --n >= 0 && field[m][n] == sign) {
-                count++;
-            }
-            else if (count >= SCORE_TO_WIN) {
-                return true;
-            }
-            else {
-                break;
+        private int checkAdverseDiagonal(int line,int column) {
+            count = 1;
+            i = lastMoveLine;
+            j = lastMoveColumn;
+            m = lastMoveLine;
+            n = lastMoveColumn;
+            while(true) {
+                if (--i >= 0 && ++j > fieldSize && field[i][j] == sign) {
+                    count++;
+                }
+                else if (++m < fieldSize && --n >= 0 && field[m][n] == sign) {
+                    count++;
+                }
+                else if (count >= SCORE_TO_WIN) {
+                    return true;
+                }
+                else {
+                    break;
+                }
             }
         }
-
         //проверка вертикали
-        count = 1;
-        i = lastMoveLine;
-        j = lastMoveColumn;
-        m = lastMoveLine;
-        n = lastMoveColumn;
-        while(true) {
-            if (--i >= 0 && field[i][j] == sign) {
-                count++;
-            }
-            else if (++m < fieldSize && field[m][n] == sign) {
-                count++;
-            }
-            else if (count >= SCORE_TO_WIN) {
-                return true;
-            }
-            else {
-                break;
+        private int checkVertical(int line,int column) {
+            count = 1;
+            i = lastMoveLine;
+            j = lastMoveColumn;
+            m = lastMoveLine;
+            n = lastMoveColumn;
+            while(true) {
+                if (--i >= 0 && field[i][j] == sign) {
+                    count++;
+                }
+                else if (++m < fieldSize && field[m][n] == sign) {
+                    count++;
+                }
+                else if (count >= SCORE_TO_WIN) {
+                    return true;
+                }
+                else {
+                    break;
+                }
             }
         }
 
         //проверка горизонтали
-        count = 1;
-        i = lastMoveLine;
-        j = lastMoveColumn;
-        m = lastMoveLine;
-        n = lastMoveColumn;
-        while(true) {
-            if (--j >= 0 && field[i][j] == sign) {
-                count++;
-            }
-            else if (++n < fieldSize && field[m][n] == sign) {
-                count++;
-            }
-            else if (count >= SCORE_TO_WIN) {
-                return true;
-            }
-            else {
-                break;
+        private int checkHorizontal(int line,int column) {
+            count = 1;
+            i = lastMoveLine;
+            j = lastMoveColumn;
+            m = lastMoveLine;
+            n = lastMoveColumn;
+            while(true) {
+                if (--j >= 0 && field[i][j] == sign) {
+                    count++;
+                }
+                else if (++n < fieldSize && field[m][n] == sign) {
+                    count++;
+                }
+                else if (count >= SCORE_TO_WIN) {
+                    return true;
+                }
+                else {
+                    break;
+                }
             }
         }
-        return false;
-    }*/
 }

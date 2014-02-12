@@ -61,7 +61,7 @@ public class GameField implements GameProcess {
         }
     }
 
-    public void showFieldtoNet (PrintWriter out) {
+    public void showField (PrintWriter out) {
         out.println();
         for(int i=0;i<FIELD_SIZE; i++) {
             for(int j=0;j<FIELD_SIZE;j++) {

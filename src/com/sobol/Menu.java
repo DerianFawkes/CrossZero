@@ -171,7 +171,7 @@ public class Menu {
                 Player PlayerX = new HumanPlayer("Player№1", 'X');
                 Player PlayerO = new HumanNetPlayer("RemotePlayer", 'O', out, in);
                 out.println("Welcome. Waiting for opponent to move");
-                gameField.showFieldtoNet(out);
+                gameField.showField(out);
 
                 Player currentPlayer = PlayerX;
 
