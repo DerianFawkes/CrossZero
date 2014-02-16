@@ -39,7 +39,7 @@ public class Menu {
             showMainMenu();
             choice = in.next();
             if (choice.equals("pvc")) {
-                System.out.println("Недоступно\n");
+                playPVC();
             }
             else if (choice.equals("pvp")) {
                 playPVP();

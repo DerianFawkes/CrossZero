@@ -28,7 +28,7 @@ public class HumanNetPlayer extends HumanPlayer {
     public void makeAMove(GameField gameField) {
         int index;
         int FIELD_SIZE = gameField.getFIELD_SIZE();
-        gameField.showFieldtoNet(out);
+        //gameField.showFieldtoNet(out);
         out.println("->Enter cell number");
         do {
 
